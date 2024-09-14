@@ -5,8 +5,17 @@ import os
 from dotenv import load_dotenv
 from model import get_model_response
 
-
 def get_prompt_template():
+    """
+    Returns a string containing the prompt template for the AI model.
+    
+    This template includes instructions for the AI to extract specific information
+    from a clinical trial document based on a user query. It also specifies the
+    desired JSON output format.
+    
+    Returns:
+        str: The prompt template string
+    """
     template_str = """You are a medical AI assistant.
     
     Perform a detailed extraction from the following clinical trial document to answer the user’s query.
@@ -45,10 +54,23 @@ def get_prompt_template():
     return template_str
 
 def initial_extraction(document, query):
+    """
+    Performs the initial extraction of information from a clinical trial document.
+    
+    This function uses the prompt template to generate a prompt for the AI model,
+    sends the prompt to the model, and processes the response into a JSON format.
+    
+    Args:
+        document (str): The clinical trial document text
+        query (str): The user's query
+    
+    Returns:
+        dict: A dictionary containing the extracted information in JSON format,
+              or None if there's an error in parsing the JSON
+    """
     template_str = get_prompt_template()
     template = jinja2.Template(template_str)
     prompt = template.render(document=document, query=query)
-
 
     response = get_model_response(prompt)
 

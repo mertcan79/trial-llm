@@ -1,0 +1,40 @@
+{
+    "description": "A randomized controlled trial investigating the efficacy and safety of upadacitinib in patients with rheumatoid arthritis over a 5-year period.",
+    "metadata": {
+      "authors": ["Dr. John Doe", "Dr. Jane Smith"],
+      "publication_date": "2022-06-15",
+      "journal": "Journal of Rheumatology",
+      "impact_factor": 5.6
+    },
+    "extracted_features": [
+      {
+        "description": "Primary Outcome: Reduction in Disease Activity Score (DAS28) after 24 weeks",
+        "value": "Significant reduction (p<0.05)"
+      },
+      {
+        "description": "Secondary Outcome: Maintenance of remission at 5 years",
+        "value": "78% of patients remained in remission"
+      },
+      {
+        "description": "Adverse Events",
+        "value": "Common: Nausea, Headache, Mild Infections; Serious: 2% experienced serious adverse events such as severe infections"
+      },
+      {
+        "description": "Statistical Significance",
+        "value": "p-value for primary outcome < 0.05, confidence interval: 95%"
+      }
+    ],
+    "questions": [
+      {
+        "question": "What is the 5-year safety data of upadacitinib in the SELECT-EARLY trial?",
+        "answer": "The 5-year safety data indicated that 2% of patients experienced serious adverse events, primarily severe infections, while common adverse events included nausea, headache, and mild infections."
+      },
+      {
+        "question": "What were the primary outcomes of the clinical trial for rheumatoid arthritis?",
+        "answer": "The primary outcome was a significant reduction in Disease Activity Score (DAS28) after 24 weeks of treatment with upadacitinib (p<0.05)."
+      }
+    ],
+    "outcome": "Positive",
+    "outcome_reasoning": "The trial showed both efficacy in reducing disease activity and a manageable safety profile over 5 years."
+  }
+  
