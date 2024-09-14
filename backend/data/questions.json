@@ -1,0 +1,38 @@
+[
+    {
+      "id": 1,
+      "difficulty": "easy",
+      "question": "What were the primary outcomes of the clinical trial for lupus?"
+    },
+    {
+      "id": 2,
+      "difficulty": "complicated",
+      "question": "Compare the adverse event profiles and statistical outcomes of immunotherapy treatments in clinical trials for rheumatoid arthritis."
+    },
+    {
+      "id": 3,
+      "difficulty": "easy",
+      "question": "What are the key safety outcomes reported in the SELECT-BEYOND trial on upadacitinib?"
+    },
+    {
+      "id": 4,
+      "difficulty": "medium",
+      "question": "How does methotrexate combined with glucocorticoids compare to etanercept in terms of efficacy in early rheumatoid arthritis?"
+    },
+    {
+      "id": 5,
+      "difficulty": "complicated",
+      "question": "What were the long-term efficacy results of anti-TNF VHH antibodies ozoralizumab in treating rheumatoid arthritis?"
+    },
+    {
+      "id": 6,
+      "difficulty": "easy",
+      "question": "What is the 5-year safety data of upadacitinib in the SELECT-EARLY trial?"
+    },
+    {
+      "id": 7,
+      "difficulty": "medium",
+      "question": "What biomarkers were measured in the randomized controlled trial comparing diclofenac and methotrexate for rheumatoid arthritis?"
+    }
+  ]
+  
