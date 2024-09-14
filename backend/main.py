@@ -1,7 +1,6 @@
 import os
 import json
 import pdfplumber
-from dotenv import load_dotenv
 from iterative_questioning import (
     iterative_extraction_with_confidence,
     evaluate_confidence,
@@ -9,14 +8,10 @@ from iterative_questioning import (
 from extraction import initial_extraction
 from question_generation import generate_questions
 
-# Load environment variables
-load_dotenv()
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-
 # Directory where articles are stored
-ARTICLES_DIR = "data/articles"
-QUESTIONS_FILE = "data/questions.json"
-OUTPUT_DIR = "data/outputs"
+ARTICLES_DIR = "backend/data/articles"
+QUESTIONS_FILE = "backend/data/questions.json"
+OUTPUT_DIR = "backend/data/outputs"
 
 
 def extract_text_from_pdf(pdf_file_path):

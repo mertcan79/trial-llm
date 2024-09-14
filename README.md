@@ -1,32 +1,36 @@
-# Clinical Trial Data Extraction and Analysis System
+# Trial-LLM
 
 ## Project Overview
 
-This project focuses on building a robust system to extract, analyze, and validate clinical trial data, with a particular focus on immunology. The system automates the process of extracting key clinical data points from PDF documents related to immunological treatments and trials (e.g., rheumatoid arthritis), generating insights, and answering specific queries. The entire system leverages Large Language Models (LLMs) to enhance the extraction process through iterative questioning, dynamic question generation, and validation.
+This project presents a cutting-edge system designed to extract, analyze, and validate clinical trial data, with a specific emphasis on immunology trials. By leveraging advanced Large Language Models (LLMs), the system automates the process of extracting critical clinical data points from unstructured sources like PDF documents. It supports data from trials on immunological treatments (e.g., rheumatoid arthritis, lupus) and enhances understanding by generating dynamic queries. The system uses iterative questioning and dynamic validation to ensure extracted insights meet a high standard of accuracy and relevance, even for complex or scattered trial data.
 
 ## Objectives
 
-1. **Automated Clinical Trial Data Extraction**: Extract critical trial outcomes, adverse events, statistical significance, and safety data from clinical trials.
-2. **Question-Answering System**: Use a dynamic question-generation and iterative-questioning process to refine the extraction of data in response to specific queries.
-3. **Validation and Accuracy**: Implement robust validation using Pydantic models to ensure the structure and integrity of extracted data.
+1. **Automated Clinical Trial Data Extraction**: Extract vital clinical endpoints such as trial outcomes, adverse events, safety profiles, and statistical significance from immunology-focused trials.
+2. **Iterative Question-Answering and Data Refinement**: Implement a dynamic question-generation and iterative extraction process to improve data accuracy and relevance by progressively refining responses to specific queries.
+3. **Validation and Data Integrity**: Use structured validation techniques (e.g., Pydantic models) to ensure extracted data is accurate, complete, and adheres to predefined schema models.
 
 ## Why This Approach?
 
 The methodology is designed to handle complex clinical trials by focusing on:
 
-- **Structured Data Extraction**: Automatically extracting outcomes and adverse events is critical for medical research, particularly in immunology, where trials are highly complex and involve long-term efficacy and safety analysis.
-- **Iterative Querying**: This system improves on traditional extraction methods by iterating over documents multiple times, ensuring higher accuracy for difficult-to-locate data points.
-- **LLM-Assisted Refinement**: The use of LLMs allows for enhanced understanding and querying of the clinical trial data, making this approach uniquely suited for highly technical domains such as immunology.
+Handling clinical trials is inherently challenging due to the diversity and complexity of data presentation. This system is designed to address these challenges through:
+
+**Structured and Unstructured Data Extraction**: Immunology trials often span several years and involve both immediate and long-term outcomes. This system automatically identifies and extracts data such as efficacy endpoints, adverse events, and safety analyses, vital for medical research.
+
+**Iterative Querying with LLMs**: Unlike traditional one-pass extraction, this system uses an iterative querying approach, allowing for multiple extraction passes on a document. This improves precision, especially when dealing with difficult-to-locate or hidden data points in clinical trial reports.
+
+**LLM-Assisted Insight Refinement**: By leveraging state-of-the-art LLMs, the system can infer complex relationships in clinical trial data, such as subtle trends in patient demographics or secondary outcomes, making it uniquely suited for fields like immunology that require high levels of technical understanding.
 
 ## Unique Advantages
 
-1. **Immunology Focus**: This system has been specifically designed to address immunology-related clinical trials, with tailored question sets and templates designed for trials involving diseases like rheumatoid arthritis and lupus.
+**Immunology-Centric Extraction**: Designed with a focus on immunology trials, the system uses specialized prompts and predefined question sets tailored to diseases such as rheumatoid arthritis and lupus. This ensures that data relevant to immunological research is prioritized during extraction.
 
-2. **Dynamic Iterative Questioning**: Traditional extraction methods fail when data is scattered or difficult to interpret. The iterative approach allows the system to refine its extraction based on intermediate feedback and follow-up questions, ensuring a complete and accurate dataset.
+**Dynamic Iterative Questioning**: Traditional extraction methods are often limited by their ability to capture scattered or less obvious data. Through iterative refinement based on intermediate results, this system ensures a complete and accurate dataset is built by revisiting sections of the trial report until an optimal extraction is achieved.
 
-3. **LLM-Powered**: Leveraging LLMs enables the system to ask relevant follow-up questions and extract insights that are often missed in manual reviews, making it both efficient and scalable.
+**LLM-Powered Question-Answering**: The system leverages the deep language understanding capabilities of LLMs to craft follow-up questions and refine the data extraction process. This allows the system to gather insights typically missed by manual reviews, enhancing the efficiency and scalability of the data extraction process.
 
-4. **Validation with Pydantic**: The system uses Pydantic to validate data structures, ensuring both the correctness of the extracted content and its conformity to predefined models. This helps in improving the reliability and robustness of the outputs.
+**Validation**: Using Pydantic models ensures that extracted data adheres to strict validation protocols, maintaining both the structural integrity and correctness of the extracted data. This is crucial for the reliability of clinical trial insights and improves robustness across datasets.
 
 ![Process Flow Diagram](img/img.png)
 
@@ -43,7 +47,7 @@ Clinical trial documents are provided as PDF files, stored in `data/articles/`. 
 
 The system processes specific questions, which are stored in `data/questions.json`. Example questions include:
 
-```
+```json
 [
 {
 "id": 1,
@@ -69,7 +73,7 @@ The system processes specific questions, which are stored in `data/questions.jso
 ### Example Output:
 
 Here is an example JSON output from a processed question:
-```
+```json
 {
 "question_id": 2,
 "question_text": "Compare the adverse event profiles and statistical outcomes of immunotherapy treatments in clinical trials for rheumatoid arthritis.",
@@ -93,7 +97,6 @@ Here is an example JSON output from a processed question:
 ]
 }
 ```
-
 
 ## Technical Process Description
 
