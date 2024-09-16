@@ -1,123 +1,119 @@
-# Trial-LLM
+# Clinical Trial Analysis System with Iterative Questioning
 
 ## Project Overview
 
-This project presents a cutting-edge system designed to extract, analyze, and validate clinical trial data, with a specific emphasis on immunology trials. By leveraging advanced Large Language Models (LLMs), the system automates the process of extracting critical clinical data points from unstructured sources like PDF documents. It supports data from trials on immunological treatments (e.g., rheumatoid arthritis, lupus) and enhances understanding by generating dynamic queries. The system uses iterative questioning and dynamic validation to ensure extracted insights meet a high standard of accuracy and relevance, even for complex or scattered trial data.
+This project is designed to process and analyze clinical trial documents using an advanced **language model** pipeline, based on **BioBERT**. The system takes user queries about clinical trials and generates accurate responses by segmenting the document, classifying the query type, constructing prompts, and ensuring consistency in responses across different sections.
 
-## Objectives
+The system supports **iterative questioning**, which enables it to refine responses over multiple iterations. This is particularly useful for complex queries or situations where relevant information is scattered across sections of the document.
 
-1. **Automated Clinical Trial Data Extraction**: Extract vital clinical endpoints such as trial outcomes, adverse events, safety profiles, and statistical significance from immunology-focused trials.
-2. **Iterative Question-Answering and Data Refinement**: Implement a dynamic question-generation and iterative extraction process to improve data accuracy and relevance by progressively refining responses to specific queries.
-3. **Validation and Data Integrity**: Use structured validation techniques (e.g., Pydantic models) to ensure extracted data is accurate, complete, and adheres to predefined schema models.
+## Key Features
 
-## Why This Approach?
+### Iterative Questioning
 
-The methodology is designed to handle complex clinical trials by focusing on:
+Iterative questioning is a key feature that allows the system to refine its responses based on previous outputs. It adjusts the query after each response iteration, enhancing the relevance and precision of the answers. This feedback loop continues until the system produces a satisfactory response, improving overall clarity and accuracy.
 
-Handling clinical trials is inherently challenging due to the diversity and complexity of data presentation. This system is designed to address these challenges through:
+### Section-Specific Querying
 
-**Structured and Unstructured Data Extraction**: Immunology trials often span several years and involve both immediate and long-term outcomes. This system automatically identifies and extracts data such as efficacy endpoints, adverse events, and safety analyses, vital for medical research.
+The system segments clinical trial documents into key sections like **Introduction**, **Methods**, **Results**, and **Adverse Events**. By processing each section individually, it ensures that the query is matched with the most relevant content, yielding more accurate and context-aware responses.
 
-**Iterative Querying with LLMs**: Unlike traditional one-pass extraction, this system uses an iterative querying approach, allowing for multiple extraction passes on a document. This improves precision, especially when dealing with difficult-to-locate or hidden data points in clinical trial reports.
+### Query Type Classification
 
-**LLM-Assisted Insight Refinement**: By leveraging state-of-the-art LLMs, the system can infer complex relationships in clinical trial data, such as subtle trends in patient demographics or secondary outcomes, making it uniquely suited for fields like immunology that require high levels of technical understanding.
+Queries are classified into different types—**factual**, **comparative**, or **inferential**. This classification helps the system decide how to generate responses, whether it needs to extract direct facts, compare elements, or infer insights.
 
-## Unique Advantages
+### Consistency Scoring
 
-**Immunology-Centric Extraction**: Designed with a focus on immunology trials, the system uses specialized prompts and predefined question sets tailored to diseases such as rheumatoid arthritis and lupus. This ensures that data relevant to immunological research is prioritized during extraction.
+The system employs **self-consistency scoring** to evaluate multiple responses and select the most coherent answer. This is particularly useful when multiple responses are generated for a single section, ensuring that the best and most consistent answer is returned to the user.
 
-**Dynamic Iterative Questioning**: Traditional extraction methods are often limited by their ability to capture scattered or less obvious data. Through iterative refinement based on intermediate results, this system ensures a complete and accurate dataset is built by revisiting sections of the trial report until an optimal extraction is achieved.
-
-**LLM-Powered Question-Answering**: The system leverages the deep language understanding capabilities of LLMs to craft follow-up questions and refine the data extraction process. This allows the system to gather insights typically missed by manual reviews, enhancing the efficiency and scalability of the data extraction process.
-
-**Validation**: Using Pydantic models ensures that extracted data adheres to strict validation protocols, maintaining both the structural integrity and correctness of the extracted data. This is crucial for the reliability of clinical trial insights and improves robustness across datasets.
-
-![Process Flow Diagram](img/img.png)
-
-## Example Workflow
-
-### Input:
-
-Clinical trial documents are provided as PDF files, stored in `data/articles/`. Example trials include:
-
-- Assessment of Clinical Analgesic Levels and Serum Biomarkers in Patients with Rheumatoid Arthritis
-- Efficacy and safety of upadacitinib in patients with rheumatoid arthritis
-
-### Questions:
-
-The system processes specific questions, which are stored in `data/questions.json`. Example questions include:
-
-```json
-[
-{
-"id": 1,
-"difficulty": "easy",
-"question": "What were the primary outcomes of the clinical trial for lupus?"
-},
-{
-"id": 2,
-"difficulty": "complicated",
-"question": "Compare the adverse event profiles and statistical outcomes of immunotherapy treatments in clinical trials for rheumatoid arthritis."
-}
-]
-```
-
-### Process:
-
-1. **Extract Text from PDF**: The system extracts the raw text from the PDF files using pdfplumber.
-2. **Initial Extraction**: The system extracts key features from the text, including outcomes, adverse events, and statistical details, using the `initial_extraction` function.
-3. **Iterative Questioning**: If the answer to the query is incomplete or not satisfactory, the system generates follow-up questions and performs additional extractions until it reaches a satisfactory confidence score.
-4. **Question Generation**: Follow-up questions are dynamically generated to refine the query process.
-5. **Validation**: The output is validated using custom validations, ensuring the integrity and structure of the data.
-
-### Example Output:
-
-Here is an example JSON output from a processed question:
+Example JSON Input:
 ```json
 {
-"question_id": 2,
-"question_text": "Compare the adverse event profiles and statistical outcomes of immunotherapy treatments in clinical trials for rheumatoid arthritis.",
-"related_article": "Efficacy and safety of upadacitinib in patients with rheumatoid arthritis",
-"steps_taken": 3,
-"confidence_score": 0.85,
-"final_answer": {
-"description": "The trial compared the adverse events between upadacitinib and other immunotherapies. Upadacitinib showed a lower rate of serious adverse events (2%) compared to other treatments.",
-"metadata": {
-"authors": ["Dr. John Doe", "Dr. Jane Smith"],
-"publication_date": "2023-04-10",
-"journal": "Immunology Research"
-},
-"extracted_features": [
-{"description": "Adverse Events", "value": "Common: Nausea, Headache; Serious: 2% serious infections"}
-]
-},
-"follow_up_questions": [
-{"question": "What are the secondary outcomes?"},
-{"question": "What is the confidence interval for serious adverse events?"}
-]
+  "query": "Compare the adverse event rates between Drug X and Drug Y in elderly patients.",
+  "clinical_trial_text": "INTRODUCTION: This study examines the efficacy and safety of Drug X and Drug Y in treating elderly patients with diabetes. METHODS: Drug X was administered to 200 patients, while Drug Y was administered to 150 patients over a 12-month period. RESULTS: Drug X resulted in 15% adverse events, while Drug Y resulted in 20% adverse events. ADVERSE EVENTS: Both drugs caused mild gastrointestinal issues in 5% of patients. Serious adverse events, including liver toxicity, occurred in 10% of Drug Y patients, compared to 5% in Drug X patients."
 }
 ```
 
-## Technical Process Description
+Example JSON Output:
 
-1. **PDF Extraction**
-   The clinical trial documents are first parsed using pdfplumber to extract raw text. This is critical in converting the often scattered and complex structure of clinical trial documents into analyzable text.
+```json
+{
+  "INTRODUCTION": {
+    "query_type": "comparative",
+    "consistency_score": 0.85,
+    "response": "This study examines the efficacy and safety of Drug X and Drug Y in elderly patients with diabetes."
+  },
+  "METHODS": {
+    "query_type": "comparative",
+    "consistency_score": 0.82,
+    "response": "Drug X was administered to 200 patients, while Drug Y was administered to 150 patients over a 12-month period."
+  },
+  "RESULTS": {
+    "query_type": "comparative",
+    "consistency_score": 0.88,
+    "response": "Drug X resulted in 15% adverse events, while Drug Y resulted in 20% adverse events."
+  },
+  "ADVERSE EVENTS": {
+    "query_type": "comparative",
+    "consistency_score": 0.90,
+    "response": "Serious adverse events, including liver toxicity, occurred in 10% of Drug Y patients, compared to 5% in Drug X patients."
+  },
+  "final_answer": {
+    "response": "Drug X resulted in fewer adverse events (15%) compared to Drug Y (20%). Additionally, serious adverse events were more common with Drug Y (10%) compared to Drug X (5%)."
+  }
+}
 
-2. **Initial Data Extraction**
-   Once the text is extracted, the `initial_extraction` function processes the text based on the user's query. It looks for predefined key features such as:
-   - Primary and Secondary Outcomes
-   - Adverse Events
-   - Statistical Significance
-   This is done using a combination of prompt engineering and parsing rules to extract the relevant content.
+```
 
-3. **Iterative Questioning**
-   The system doesn't stop at the first attempt to extract data. If it detects that a question hasn't been fully answered (based on a confidence scoring mechanism), it generates follow-up questions using the `question_generation.py` script. These follow-up questions help in refining the answer until a satisfactory result is reached.
+## Advantages
 
-4. **Validation with Pydantic**
-   After data extraction, the system validates the structure and content of the extracted data using Pydantic models. This ensures that:
-   - All expected fields are present.
-   - Data like publication dates follow the correct format (YYYY-MM-DD).
-   - Answers and metadata conform to the expected structure.
+- **Enhanced Accuracy**: By segmenting the clinical trial document and matching each query with relevant sections, the system achieves high accuracy in its responses.
+- **Iterative Refinement**: The iterative questioning methodology ensures that even complex queries get more accurate and refined responses over multiple iterations.
+- **Scalability**: The system supports batch processing, enabling the analysis of large datasets efficiently, making it suitable for extensive clinical trials data.
+- **Context-Aware Responses**: The model is able to deliver contextually accurate responses specific to the clinical trial domain by using **BioBERT**, which is pre-trained on biomedical text.
 
-5. **JSON Output Generation**
-   Once the extraction, refinement, and validation are complete, the final results are saved as JSON files, which include detailed responses to the questions, metadata, and confidence scores.
+## Process Flow
+
+1. **Input**: The user inputs a query along with the full clinical trial document.
+2. **Query Classification**: The system classifies the input query (e.g., factual, comparative, inferential).
+3. **Document Segmentation**: The clinical trial document is segmented into relevant sections (Introduction, Methods, Results, Adverse Events).
+4. **Prompt Construction**: Prompts are generated based on the query type and corresponding section.
+5. **Batch Response Generation**: The system generates multiple responses for each section using batch processing.
+6. **Consistency Calculation**: Consistency of the generated responses is calculated, and the best response is selected.
+7. **Iterative Questioning**: If the system detects any uncertainty or if the initial response is incomplete, the query is refined, and the process repeats until satisfactory results are obtained.
+8. **Output**: The system returns the best possible answer, along with consistency scores, providing a comprehensive response.
+
+## Example Usage
+
+Given the following input:
+
+```text
+Query: "How does Drug A compare to Drug B in terms of adverse events in elderly patients?"
+Clinical Trial Document: Full text of a clinical trial.
+```
+
+The system would:
+
+1. Classify the query as comparative.
+2. Segment the clinical trial document into sections.
+3. Construct a prompt tailored for the Methods and Adverse Events sections.
+4. Generate multiple responses using batch processing.
+5. Calculate consistency scores and select the best response:
+
+   ```text
+   "Drug A had fewer adverse events compared to Drug B, especially in patients over 65."
+   ```
+
+6. If necessary, the system will iterate by refining the question or focusing on other sections to improve the response.
+
+### Advantages of Iterative Questioning
+
+The iterative questioning process refines the responses by:
+
+- Repeating the querying process with refined prompts.
+- Adjusting focus based on inconsistencies or incomplete answers.
+- Ensuring that even scattered information across multiple sections is captured accurately.
+
+This method is particularly beneficial for complex clinical queries, where direct answers may not always be available, and additional context or refinement is necessary.
+
+## Conclusion
+
+This system provides a robust, scalable, and efficient method for answering complex clinical queries from trial documents. With the inclusion of iterative questioning, it ensures high accuracy and relevance in its responses, making it ideal for healthcare and research professionals needing in-depth clinical insights.
