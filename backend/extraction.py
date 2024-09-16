@@ -1,83 +1,38 @@
-import openai
-import json
-import jinja2
-import os
-from dotenv import load_dotenv
-from model import get_model_response
+import re
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+import pdfplumber
 
-def get_prompt_template():
+def segment_document(document_text):
     """
-    Returns a string containing the prompt template for the AI model.
-    
-    This template includes instructions for the AI to extract specific information
-    from a clinical trial document based on a user query. It also specifies the
-    desired JSON output format.
-    
-    Returns:
-        str: The prompt template string
+    Segment the clinical trial document into sections based on typical headers.
     """
-    template_str = """You are a medical AI assistant.
+    section_headers = ["INTRODUCTION", "METHODS", "RESULTS", "DISCUSSION", "CONCLUSION", "ADVERSE EVENTS"]
+    sections = {}
+    current_section = None
+    header_pattern = re.compile(r"^\s*(" + "|".join(section_headers) + r")\s*$", re.IGNORECASE)
     
-    Perform a detailed extraction from the following clinical trial document to answer the user’s query.
+    for line in document_text.split('\n'):
+        line = line.strip()
+        if header_pattern.match(line):
+            current_section = line.upper()
+            sections[current_section] = []
+        elif current_section:
+            sections[current_section].append(line)
     
-    Document:
-    {{ document }}
+    for section in sections:
+        sections[section] = ' '.join(sections[section])
     
-    User Query:
-    {{ query }}
-    
-    Extract the following information:
-    - Study design
-    - Number of participants
-    - Interventions (detailed)
-    - Outcomes (primary and secondary)
-    - Statistical significance (p-values, confidence intervals)
-    - Adverse events
-    - Metadata (authors, publication date, journal)
-    
-    Provide the output in this JSON format:
-    {
-      "description": "<summary>",
-      "metadata": {
-        "authors": ["<author1>", "<author2>"],
-        "publication_date": "<date>",
-        "journal": "<journal_name>"
-      },
-      "extracted_features": [
-        {
-          "description": "<feature_description>",
-          "value": "<value>"
-        }
-      ]
-    }
-    Ensure the output is valid JSON and includes all required fields."""
-    return template_str
+    return sections
 
-def initial_extraction(document, query):
+def find_relevant_section(query, sections):
     """
-    Performs the initial extraction of information from a clinical trial document.
-    
-    This function uses the prompt template to generate a prompt for the AI model,
-    sends the prompt to the model, and processes the response into a JSON format.
-    
-    Args:
-        document (str): The clinical trial document text
-        query (str): The user's query
-    
-    Returns:
-        dict: A dictionary containing the extracted information in JSON format,
-              or None if there's an error in parsing the JSON
+    Use TF-IDF to match the query to the most relevant section in the document.
     """
-    template_str = get_prompt_template()
-    template = jinja2.Template(template_str)
-    prompt = template.render(document=document, query=query)
-
-    response = get_model_response(prompt)
-
-    output_text = response.choices[0].message.content.strip()
-    try:
-        output_json = json.loads(output_text)
-        return output_json
-    except json.JSONDecodeError as e:
-        print(f"JSON parsing error: {e}")
-        return None
+    vectorizer = TfidfVectorizer()
+    section_texts = list(sections.values())
+    tfidf_matrix = vectorizer.fit_transform(section_texts + [query])
+    similarities = cosine_similarity(tfidf_matrix[-1], tfidf_matrix[:-1])
+    most_relevant_index = similarities.argmax()
+    most_relevant_section = list(sections.keys())[most_relevant_index]
+    return most_relevant_section, sections[most_relevant_section]
