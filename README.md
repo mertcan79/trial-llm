@@ -1,119 +1,86 @@
-# Clinical Trial Analysis System with Iterative Questioning
+# Clinical Trial Document Analysis with Iterative Questioning
 
 ## Project Overview
 
-This project is designed to process and analyze clinical trial documents using an advanced **language model** pipeline, based on **BioBERT**. The system takes user queries about clinical trials and generates accurate responses by segmenting the document, classifying the query type, constructing prompts, and ensuring consistency in responses across different sections.
+This project provides a powerful framework for analyzing clinical trial documents using a combination of **BioBERT** and **GPT-4** models. The goal is to automate the process of extracting relevant information, answering questions, and evaluating the consistency of responses from clinical trial data, such as drug comparisons, adverse events, and study design.
 
-The system supports **iterative questioning**, which enables it to refine responses over multiple iterations. This is particularly useful for complex queries or situations where relevant information is scattered across sections of the document.
+The system implements **iterative questioning** to refine responses, ensuring that the model not only answers questions based on the clinical trial text but also cross-validates the answers for consistency and accuracy.
 
-## Key Features
+### Key Advantages
 
-### Iterative Questioning
+- **Combines GPT-4 and BioBERT**: Leverages the domain-specific knowledge of **BioBERT** for processing medical text, while utilizing the advanced reasoning capabilities of **GPT-4** for generating, refining, and validating answers.
+- **Iterative Questioning**: Each query undergoes multiple rounds of question-answer generation and validation, ensuring that the most consistent and accurate responses are selected.
+- **Section-Specific Prompting**: The system segments clinical trial documents into sections (e.g., "INTRODUCTION", "METHODS", "RESULTS") and customizes the responses based on each section's relevance to the query.
+- **Batch Processing**: Efficient batch processing of queries and responses ensures scalability across large documents and multiple sections.
+- **Consistency Checking**: Ensures that answers across sections of a document are consistent, improving reliability.
 
-Iterative questioning is a key feature that allows the system to refine its responses based on previous outputs. It adjusts the query after each response iteration, enhancing the relevance and precision of the answers. This feedback loop continues until the system produces a satisfactory response, improving overall clarity and accuracy.
+## Example Workflow
 
-### Section-Specific Querying
+1. **Query Classification**: The input query is first classified (e.g., factual, comparative, inferential) to determine the type of response needed.
+2. **Document Segmentation**: The clinical trial document is segmented into meaningful sections (e.g., "INTRODUCTION", "METHODS", "RESULTS", "ADVERSE EVENTS").
+3. **Iterative Questioning**:
+    - **First Pass**: The query is passed to both **BioBERT** and **GPT-4**, where initial responses are generated based on the segmented sections of the document.
+    - **Consistency Evaluation**: Responses are checked for consistency across multiple iterations.
+    - **Refinement**: GPT-4 iteratively refines the answers, taking into account both previous responses and cross-validation from different sections.
+4. **Final Answer Generation**: A final, consistent answer is provided based on the section-specific iterations and refinements.
 
-The system segments clinical trial documents into key sections like **Introduction**, **Methods**, **Results**, and **Adverse Events**. By processing each section individually, it ensures that the query is matched with the most relevant content, yielding more accurate and context-aware responses.
+## Example Use Case
 
-### Query Type Classification
+Let’s assume a query asks, "Compare the adverse event rates between Drug X and Drug Y in elderly patients."
 
-Queries are classified into different types—**factual**, **comparative**, or **inferential**. This classification helps the system decide how to generate responses, whether it needs to extract direct facts, compare elements, or infer insights.
+1. **Input**:
+    ```json
+    {
+      "query": "Compare the adverse event rates between Drug X and Drug Y in elderly patients.",
+      "clinical_trial_text": "INTRODUCTION: This study examines the efficacy and safety of Drug X and Drug Y in treating elderly patients with diabetes. METHODS: Drug X was administered to 200 patients, while Drug Y was administered to 150 patients over a 12-month period. RESULTS: Drug X resulted in 15% adverse events, while Drug Y resulted in 20% adverse events. ADVERSE EVENTS: Both drugs caused mild gastrointestinal issues in 5% of patients. Serious adverse events, including liver toxicity, occurred in 10% of Drug Y patients, compared to 5% in Drug X patients."
+    }
+    ```
 
-### Consistency Scoring
+2. **Iterative Questioning Process**:
+    - **First Pass**: Both **BioBERT** and **GPT-4** generate responses based on each section of the clinical trial document.
+    - **Section-Specific Prompting**: Answers related to adverse events are refined based on relevant sections like "RESULTS" and "ADVERSE EVENTS".
+    - **Consistency Check**: The system compares the responses across sections to ensure that the answers are logically consistent.
+    - **Refinement**: GPT-4 refines the responses to clarify any ambiguities or contradictions.
 
-The system employs **self-consistency scoring** to evaluate multiple responses and select the most coherent answer. This is particularly useful when multiple responses are generated for a single section, ensuring that the best and most consistent answer is returned to the user.
+3. **Output**:
+    ```json
+    {
+      "INTRODUCTION": {
+        "query_type": "comparative",
+        "consistency_score": 0.85,
+        "response": "This study examines the efficacy and safety of Drug X and Drug Y in elderly patients with diabetes."
+      },
+      "METHODS": {
+        "query_type": "comparative",
+        "consistency_score": 0.82,
+        "response": "Drug X was administered to 200 patients, while Drug Y was administered to 150 patients over a 12-month period."
+      },
+      "RESULTS": {
+        "query_type": "comparative",
+        "consistency_score": 0.88,
+        "response": "Drug X resulted in 15% adverse events, while Drug Y resulted in 20% adverse events."
+      },
+      "ADVERSE EVENTS": {
+        "query_type": "comparative",
+        "consistency_score": 0.90,
+        "response": "Serious adverse events, including liver toxicity, occurred in 10% of Drug Y patients, compared to 5% in Drug X patients."
+      },
+      "final_answer": {
+        "response": "Drug X resulted in fewer adverse events (15%) compared to Drug Y (20%). Additionally, serious adverse events were more common with Drug Y (10%) compared to Drug X (5%)."
+      }
+    }
+    ```
 
-Example JSON Input:
-```json
-{
-  "query": "Compare the adverse event rates between Drug X and Drug Y in elderly patients.",
-  "clinical_trial_text": "INTRODUCTION: This study examines the efficacy and safety of Drug X and Drug Y in treating elderly patients with diabetes. METHODS: Drug X was administered to 200 patients, while Drug Y was administered to 150 patients over a 12-month period. RESULTS: Drug X resulted in 15% adverse events, while Drug Y resulted in 20% adverse events. ADVERSE EVENTS: Both drugs caused mild gastrointestinal issues in 5% of patients. Serious adverse events, including liver toxicity, occurred in 10% of Drug Y patients, compared to 5% in Drug X patients."
-}
-```
+## Iterative Questioning: How It Works
 
-Example JSON Output:
+- **First Iteration**: Both **BioBERT** and **GPT-4** generate initial responses to the query based on segmented sections.
+- **Second Iteration**: GPT-4 refines the response by considering inconsistencies or gaps in the first-round answers.
+- **Further Iterations**: The process repeats, iterating through section-specific prompting and cross-validating responses to ensure the highest consistency score.
+  
+The **iterative process** enables the system to handle complex questions by considering all possible responses, refining them iteratively, and selecting the best answer through consistency checks.
 
-```json
-{
-  "INTRODUCTION": {
-    "query_type": "comparative",
-    "consistency_score": 0.85,
-    "response": "This study examines the efficacy and safety of Drug X and Drug Y in elderly patients with diabetes."
-  },
-  "METHODS": {
-    "query_type": "comparative",
-    "consistency_score": 0.82,
-    "response": "Drug X was administered to 200 patients, while Drug Y was administered to 150 patients over a 12-month period."
-  },
-  "RESULTS": {
-    "query_type": "comparative",
-    "consistency_score": 0.88,
-    "response": "Drug X resulted in 15% adverse events, while Drug Y resulted in 20% adverse events."
-  },
-  "ADVERSE EVENTS": {
-    "query_type": "comparative",
-    "consistency_score": 0.90,
-    "response": "Serious adverse events, including liver toxicity, occurred in 10% of Drug Y patients, compared to 5% in Drug X patients."
-  },
-  "final_answer": {
-    "response": "Drug X resulted in fewer adverse events (15%) compared to Drug Y (20%). Additionally, serious adverse events were more common with Drug Y (10%) compared to Drug X (5%)."
-  }
-}
+## Advantages of Using GPT-4 and BioBERT Together
 
-```
-
-## Advantages
-
-- **Enhanced Accuracy**: By segmenting the clinical trial document and matching each query with relevant sections, the system achieves high accuracy in its responses.
-- **Iterative Refinement**: The iterative questioning methodology ensures that even complex queries get more accurate and refined responses over multiple iterations.
-- **Scalability**: The system supports batch processing, enabling the analysis of large datasets efficiently, making it suitable for extensive clinical trials data.
-- **Context-Aware Responses**: The model is able to deliver contextually accurate responses specific to the clinical trial domain by using **BioBERT**, which is pre-trained on biomedical text.
-
-## Process Flow
-
-1. **Input**: The user inputs a query along with the full clinical trial document.
-2. **Query Classification**: The system classifies the input query (e.g., factual, comparative, inferential).
-3. **Document Segmentation**: The clinical trial document is segmented into relevant sections (Introduction, Methods, Results, Adverse Events).
-4. **Prompt Construction**: Prompts are generated based on the query type and corresponding section.
-5. **Batch Response Generation**: The system generates multiple responses for each section using batch processing.
-6. **Consistency Calculation**: Consistency of the generated responses is calculated, and the best response is selected.
-7. **Iterative Questioning**: If the system detects any uncertainty or if the initial response is incomplete, the query is refined, and the process repeats until satisfactory results are obtained.
-8. **Output**: The system returns the best possible answer, along with consistency scores, providing a comprehensive response.
-
-## Example Usage
-
-Given the following input:
-
-```text
-Query: "How does Drug A compare to Drug B in terms of adverse events in elderly patients?"
-Clinical Trial Document: Full text of a clinical trial.
-```
-
-The system would:
-
-1. Classify the query as comparative.
-2. Segment the clinical trial document into sections.
-3. Construct a prompt tailored for the Methods and Adverse Events sections.
-4. Generate multiple responses using batch processing.
-5. Calculate consistency scores and select the best response:
-
-   ```text
-   "Drug A had fewer adverse events compared to Drug B, especially in patients over 65."
-   ```
-
-6. If necessary, the system will iterate by refining the question or focusing on other sections to improve the response.
-
-### Advantages of Iterative Questioning
-
-The iterative questioning process refines the responses by:
-
-- Repeating the querying process with refined prompts.
-- Adjusting focus based on inconsistencies or incomplete answers.
-- Ensuring that even scattered information across multiple sections is captured accurately.
-
-This method is particularly beneficial for complex clinical queries, where direct answers may not always be available, and additional context or refinement is necessary.
-
-## Conclusion
-
-This system provides a robust, scalable, and efficient method for answering complex clinical queries from trial documents. With the inclusion of iterative questioning, it ensures high accuracy and relevance in its responses, making it ideal for healthcare and research professionals needing in-depth clinical insights.
+- **BioBERT** excels in domain-specific text comprehension (medical, biomedical), providing the most relevant sections of clinical trials.
+- **GPT-4** brings reasoning and language-generation capabilities to refine answers and handle complex queries that require broader context.
+- The combination of both models ensures that answers are both medically accurate and logically consistent.
